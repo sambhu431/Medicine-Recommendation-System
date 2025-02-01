@@ -1,0 +1,292 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Recommendation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" rel="stylesheet">
+    <style>
+
+        html{
+            font-family: 'Robto', sans-serif;
+        }
+
+        body { 
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .sideEffect_container{
+            background-color: white;
+            padding: 50px;
+            text-align: center;
+        }
+        
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            padding: 10px;
+            width: 900px;
+            box-sizing: border-box;
+        }
+
+
+
+        /* Input Side Effect CSS Code */
+        .input-group-sideEffect {
+            margin-bottom: 20px;
+        }
+        .input-group-sideEffect label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-group-sideEffect input {
+            padding: 10px;
+            width: 900px;
+            box-sizing: border-box;
+        }
+
+
+        .product-container{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            
+        }
+
+        .product-container-sideEffect{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .product-item{
+            margin:10px;
+            padding:10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer; 
+        }
+
+        .product-item-sideEffect{
+            margin:10px;
+            padding:10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer; 
+        }
+
+
+        nav {
+            background: linear-gradient(to left, #444444, 
+            #525252);
+            color: white;
+            padding: 10px 0;
+
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color : #b9b8b8;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        nav ul li a:hover {
+            color : #fff;
+            text-decoration: underline;
+        }
+
+        .centered-heading{
+            display: flex;
+            justify-content: center;
+            align-items:  center;
+            height:  100px; 
+        }
+
+        .centered-heading h1 {
+            font-size:  2.5em;
+            text-align: center;
+        }
+
+        .flash{
+            color: red;
+            text-align: center;
+            margin: 20px 0;
+        }
+   
+    </style>
+</head>
+
+
+<body>
+
+    <nav class="navbar"> 
+        <ul> 
+            <li>
+                <a href="http://127.0.0.1:5000/">Home</a>
+            </li> 
+
+            <li>
+                <a href="/contact">Contact</a>
+            </li> 
+        </ul> 
+    </nav> 
+
+
+
+    <div class="container">
+
+        <div class="centered-heading"> <h1>Medicine Recommendation</h1> </div>
+
+        <form action="/recommend_action" id="recommendationForm" method="POST">
+            <div class="input-group">
+                <label for="product_name">Enter Medicine Name:</label>
+                <input name="user_input" placeholder="Enter Medicines Here" type="text" id="product_name" required>
+            </div>
+            <button type="submit">Get Recommendation</button>
+        </form>
+
+
+
+    <!-- Flash Messages --> 
+    {% with messages = get_flashed_messages() %} 
+    {% if messages %} 
+    <div class="flash"> 
+        {% for message in messages %} 
+            <p>{{ message }}</p> 
+        {% endfor %} 
+    </div> 
+
+    {% endif %} 
+    {% endwith %}
+
+
+
+
+
+    {% if sorted_top_medicines %}
+    
+    <div class="product-container" id="productContainer">
+        
+    {% for name, details  in sorted_top_medicines.items(): %}
+       <div class="product-item">
+            <img id="result_img" height="200px" width="200px" src="{{ details['image_url'] }}" alt="{{ name }}" loading="lazy"> 
+            <h3> Medicine Name : {{ name }} </h3>
+            <h4> Medicine Used For : {{ details["usedFor"] }} </h4>
+            <h4> Medicine Side Effects : {{ details["sideEffect"] }} </h4>
+            <h4> Review Scores : {{ details["review_score"] }} </h4>
+            <h4> Manufacturer : {{ details["mft"] }} </h4>
+       </div>
+    {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+
+
+
+
+<!-- ------------------------------------------------------------------------------------------------ -->
+<!-- ------------------------------------------------------------------------------------------------ -->
+<!-- CODE FOR SIDE EFFECT -->
+<!-- ------------------------------------------------------------------------------------------------ -->
+<!-- ------------------------------------------------------------------------------------------------ -->
+
+
+
+
+
+    <div class="sideEffect_container">
+
+        <div class="centered-heading"> <h1>Recommendation Based On Uses's And Side Effects</h1> </div>
+
+        <form action="/recommend_sideEffect" id="recommendationForm" method="POST">
+            <div class="input-group-sideEffect">
+                <label for="product_name_sideEffect">Enter Medicine Name:</label>
+                <input name="side_effect" placeholder="Enter Medicines Here" type="text" id="product_name_sideEffect" required>
+            </div>
+            <button type="submit">Get Recommendation</button>
+        </form>
+        
+        
+        
+        
+        {% with Messages = get_flashed_messages() %} 
+        {% if Messages %} 
+        <div class="flash"> 
+            {% for message in Messages %} 
+            <p>{{ message }}</p> 
+            {% endfor %} 
+        </div> 
+ 
+        {% endif %} 
+        {% endwith %}
+ 
+ 
+ 
+ 
+        {% if sorted_top_medicines_side_effects %}
+     
+        <div class="product-container-sideEffect" id="productContainerSideEffect">
+         
+        {% for name, details  in sorted_top_medicines_side_effects.items(): %}
+            <div class="product-item-sideEffect">
+                <img id="result_img" height="200px" width="200px" src="{{ details['image_url'] }}" alt="{{ name }}" loading="lazy"> 
+                <h3> Medicine Name : {{ name }} </h3>
+                <h4> Medicine Used For : {{ details["usedFor"] }} </h4>
+                <h4> Medicine Side Effects : {{ details["sideEffect"] }} </h4>
+                <h4> Review Scores : {{ details["review_score"] }} </h4>
+                <h4> Manufacturer : {{ details["mft"] }} </h4>
+            </div>
+        {% endfor %}
+ 
+    </div>
+ 
+        {% endif %}
+
+
+
+
+
+
+
+
+
+    
+</body>
+</html>
+
+
+
+
+
